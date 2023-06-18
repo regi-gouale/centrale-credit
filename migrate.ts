@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize-typescript';
 const { Umzug, SequelizeStorage } = require('umzug');
 
+
 const sequelize = new Sequelize({
     dialect: 'postgres',
     host: 'localhost',
@@ -9,19 +10,14 @@ const sequelize = new Sequelize({
     password: '',
     database: 'centralecredit'
 });
+// console.log('sequelize', sequelize);
 
 const umzug = new Umzug({
+    migrations: { glob: 'src/migrations/*.ts' },
+    context: sequelize.getQueryInterface(),
     storage: new SequelizeStorage({ sequelize }),
-    storageOptions: { sequelize },
-    logging: false,
-    migrations: {
-        params: [
-            sequelize,
-            sequelize.constructor,
-        ],
-        path: './src/migrations',
-        pattern: /\.ts$/,
-    },
+    logger: console,
+    logging: false
 });
 
 const task = (process.argv[2] || '').trim();
